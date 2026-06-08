@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose a new capability or improvement
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What mission-analysis or engineering problem are you trying to solve?
+      placeholder: I want to model...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior, API, or workflow you would like to see.
+      placeholder: Add a force model / guidance law / validation workflow that...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds, adjacent libraries, or other designs you evaluated.
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Papers, mission docs, or datasets that support the request.

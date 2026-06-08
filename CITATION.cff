@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use cislunar-sim in published work, please cite it as below."
+type: software
+title: "cislunar-sim"
+abstract: >
+  High-fidelity cislunar spacecraft simulation in pure Python, validated against
+  LightSail 2 telemetry. Provides an adaptive RK4(5) integrator, a complete
+  force environment (J2/J3, GRAIL mascon lunar gravity, ion thruster, solar sail
+  SRP, atmospheric drag, eclipse shadowing, attitude dynamics), JPL-quality
+  DE430 ephemeris, and Q-law orbital guidance laws.
+authors:
+  - name: "Arbor Engineering Group"
+    email: sean@arboreng.com
+version: "1.0.0"
+date-released: "2026-06-08"
+license: MIT
+repository-code: "https://github.com/arboreng/cislunar-sim"
+url: "https://github.com/arboreng/cislunar-sim"
+keywords:
+  - spacecraft
+  - astrodynamics
+  - orbital mechanics
+  - cislunar
+  - solar sail
+  - ion thruster
+  - simulation
+  - guidance

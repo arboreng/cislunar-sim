@@ -1,0 +1,221 @@
+{
+  "generated_at": "2026-06-03T22:21:52.625112+00:00",
+  "description": "cislunar-sim physics engine external validation benchmarks. See src/cislunar/validation/physics_benchmark.py for methodology and citations.",
+  "benchmarks": [
+    {
+      "name": "Sail characteristic acceleration (McInnes Table 2.1)",
+      "passed": true,
+      "measured": 9.07946334438251e-06,
+      "reference": 9.126e-06,
+      "tolerance_pct": 1.0,
+      "error_pct": 0.5099348632203544,
+      "unit": "m/s\u00b2",
+      "source": "[McInnes1999] Table 2.1",
+      "notes": "Ideal sail (boom_shadow=0), rho=0.9999, 1 AU, normal-facing, A=1 m\u00b2, m=1 kg; ~0.5% residual from solar constant (1361 vs McInnes ~1368 W/m\u00b2)"
+    },
+    {
+      "name": "Eclipse fraction at 400 km (Bate/Mueller/White cylindrical formula)",
+      "passed": true,
+      "measured": 0.39004113038253235,
+      "reference": 0.39004113038253235,
+      "tolerance_pct": 0.01,
+      "error_pct": 0.0,
+      "unit": "fraction",
+      "source": "Bate, Mueller & White (1971) Appendix; cylindrical shadow, \u03b2=0",
+      "notes": "r=6771.0 km; ISS observational range 37\u201340% consistent"
+    },
+    {
+      "name": "J2 RAAN precession vs. Brouwer theory (400 km, i=51.6\u00b0)",
+      "passed": true,
+      "measured": -5.005875822730586,
+      "reference": -5.009586484808759,
+      "tolerance_pct": 1.0,
+      "error_pct": 0.07407122502875135,
+      "unit": "\u00b0/day",
+      "source": "[Brouwer1959] Equation 40",
+      "notes": "24-hour simulation; coast; J2-only gravity; atan2 RAAN unwrapped"
+    },
+    {
+      "name": "Ephemeris Moon LUT interpolation vs. direct astropy (2025-01-01)",
+      "passed": true,
+      "measured": 8.812998380548297,
+      "reference": 0.0,
+      "tolerance_pct": 0.013097977152950984,
+      "error_pct": 0.002308649028748312,
+      "unit": "km (interpolation error)",
+      "source": "astropy built-in DE430; same source as LUT",
+      "notes": "Moon geocentric dist: 381.738 Mm; 50 km << 5 km gate (interpolation accuracy only)"
+    },
+    {
+      "name": "Three-body specific energy drift over 24 h (LEO, Earth+Moon+Sun)",
+      "passed": 1,
+      "measured": 0.00034971175791522293,
+      "reference": 0.0,
+      "tolerance_pct": 0.01,
+      "error_pct": 0.00034971175791522293,
+      "unit": "% two-body energy change",
+      "source": "Integrator correctness; see Battin [1999] \u00a76.2",
+      "notes": "Drift is physical (Moon+Sun perturbation); >0.01% indicates integrator error, not physics"
+    },
+    {
+      "name": "Lunar J2 RAAN precession at 100 km, i=45\u00b0 (Brouwer)",
+      "passed": true,
+      "measured": -0.846232526231876,
+      "reference": -0.8460092684198837,
+      "tolerance_pct": 5.0,
+      "error_pct": 0.026389523179724567,
+      "unit": "\u00b0/day",
+      "source": "[Brouwer1959] Eq. 40 applied to Moon; J2+J3 gravity",
+      "notes": "RAAN used (arg. perigee undefined for circular orbit); 5% tol for J3+mascon noise"
+    },
+    {
+      "name": "Lunar gravity force ordering at 200 km (J2 > J3 > mascon)",
+      "passed": true,
+      "measured": 0.0003193828914729463,
+      "reference": 0.00011972245887856015,
+      "tolerance_pct": 0.0,
+      "error_pct": 0.0,
+      "unit": "m/s\u00b2 (J2 component; reference=J3)",
+      "source": "GRAIL J2/J3 constants; physics/forces/gravity.py",
+      "notes": "J2=3.19e-04  J3=1.20e-04  mascon=5.64e-05 m/s\u00b2  ordering=OK  mag=OK"
+    },
+    {
+      "name": "Low lunar orbit energy conservation (100 km, J2+J3+mascons, 1 period)",
+      "passed": 1,
+      "measured": 7.736478870641691e-06,
+      "reference": 0.0,
+      "tolerance_pct": 0.005,
+      "error_pct": 7.736478870641691e-06,
+      "unit": "% lunar two-body energy change",
+      "source": "Integrator correctness criterion; full perturbation model",
+      "notes": "Drift is physical; >0.005% indicates integrator error at Moon"
+    },
+    {
+      "name": "CheckpointEvent timing accuracy (zero-gravity straight line)",
+      "passed": true,
+      "measured": 1.6796875,
+      "reference": 1.6666666666666667,
+      "tolerance_pct": 60.0,
+      "error_pct": 0.7812499999999954,
+      "unit": "s (crossing time from step start)",
+      "source": "Analytical: t = (dist \u2212 radius) / speed",
+      "notes": "gate_dist=30 km, gate_r=25 km, speed=3 km/s \u2192 t=1.667 s"
+    },
+    {
+      "name": "SurfaceEvent timing accuracy (zero-gravity radial fall)",
+      "passed": true,
+      "measured": 4.0234375,
+      "reference": 4.0,
+      "tolerance_pct": 25.0,
+      "error_pct": 0.5859375,
+      "unit": "s (impact time from step start)",
+      "source": "Analytical: t = gap / speed",
+      "notes": "gap=2000 m, speed=500 m/s \u2192 t=4.0 s"
+    },
+    {
+      "name": "EclipseEvent timing vs. analytical shadow entry (500 km orbit)",
+      "passed": 1,
+      "measured": 1741.252724254699,
+      "reference": 1763.3106139193458,
+      "tolerance_pct": 1.7013451721542356,
+      "error_pct": 1.2509361362952567,
+      "unit": "s (shadow entry time from step start)",
+      "source": "Analytical: t = (\u03c0 \u2212 arcsin(R_E/r)) / \u03c0 \u00d7 T_half",
+      "notes": "500 km orbit; analytic t_entry=1763.3 s"
+    },
+    {
+      "name": "Sail-power coupling: P_solar \u221d cos(\u03b8) at 45\u00b0 tilt",
+      "passed": true,
+      "measured": 32.335710260948346,
+      "reference": 32.335710260948346,
+      "tolerance_pct": 0.1,
+      "error_pct": 0.0,
+      "unit": "W (raw solar panel output)",
+      "source": "PowerBudgetModel: P_solar = flux \u00d7 A \u00d7 \u03b7 \u00d7 cos(\u03b8_array)",
+      "notes": "P_solar_max=45.73 W; P_solar_45=32.34 W; expected=32.34 W"
+    },
+    {
+      "name": "Eclipse thrust gate: P_thruster = 0 in full shadow, empty battery",
+      "passed": true,
+      "measured": 0.0,
+      "reference": 0.0,
+      "tolerance_pct": 0.0,
+      "error_pct": 0.0,
+      "unit": "W",
+      "source": "PowerBudgetModel: thruster gated on P_available > 0",
+      "notes": "in_eclipse=True; P_solar=0.000 W"
+    },
+    {
+      "name": "Penumbra: shadow_fraction() \u2208 (0, 1) at geometric midpoint",
+      "passed": true,
+      "measured": 0.5,
+      "reference": 0.5,
+      "tolerance_pct": 50.0,
+      "error_pct": 0.0,
+      "unit": "illumination fraction",
+      "source": "Conical shadow geometry; R_SUN from eclipse.py",
+      "notes": "r_perp=6371144 m  r_umbra=6339800 m  r_penu=6402488 m  f=0.5000"
+    },
+    {
+      "name": "Angular momentum conservation, pure two-body, 3 days (400 km LEO)",
+      "passed": true,
+      "measured": 0.0007435986594283345,
+      "reference": 0.0,
+      "tolerance_pct": 0.001,
+      "error_pct": 0.0007435986594283345,
+      "unit": "% |h| change over 3 days",
+      "source": "Exact integral of two-body problem; Battin [1999] \u00a71",
+      "notes": "|h0|=5.195117e+10  |h1|=5.195155e+10  drift=0.000744%"
+    },
+    {
+      "name": "TLI energy: \u0394V = (\u221a2 \u2212 1)\u00d7v_c gives E \u2248 0 (C3 = 0)",
+      "passed": 1,
+      "measured": 0.0,
+      "reference": 0.0,
+      "tolerance_pct": 0.5,
+      "error_pct": 0.0,
+      "unit": "J/kg (specific energy after TLI burn)",
+      "source": "Bate/Mueller/White \u00a72.8; Battin [1999] \u00a74",
+      "notes": "v_c=7672.60 m/s  v_esc=10850.69 m/s  \u0394V=3178.09 m/s  E_after=0.000 J/kg"
+    },
+    {
+      "name": "Multi-day cislunar energy drift, 3 days (Earth+Moon+Sun, LEO)",
+      "passed": 1,
+      "measured": 0.0012244656826668674,
+      "reference": 0.0,
+      "tolerance_pct": 0.05,
+      "error_pct": 0.0012244656826668674,
+      "unit": "% two-body energy change over 3 days",
+      "source": "Integrator stability criterion; extends 24h benchmark",
+      "notes": "Drift is physical (Moon+Sun perturbation); >0.05% over 3 days indicates integrator error"
+    },
+    {
+      "name": "GTO initial state: apogee speed from make_lunar_craft vs vis-viva",
+      "passed": true,
+      "measured": 1595.3136126135837,
+      "reference": 1595.3136126135837,
+      "tolerance_pct": 0.1,
+      "error_pct": 0.0,
+      "unit": "m/s",
+      "source": "Vis-viva equation; Ariane 5 GTO (185 km \u00d7 35,786 km)",
+      "notes": "e_ref=0.7308; e_meas=0.7308; r_apo_ref=42.157 Mm; r_meas=42.157 Mm"
+    },
+    {
+      "name": "Trajectory convergence: 60 s vs 10 s step, 3-day cislunar",
+      "passed": true,
+      "measured": 0.034229438749413796,
+      "reference": 0.0,
+      "tolerance_pct": 0.0,
+      "error_pct": 0.0,
+      "unit": "km (position disagreement at day 3)",
+      "source": "Self-convergence test; see also validation/EXTERNAL_COMPARISON_PROTOCOL.md",
+      "notes": "60 s pos: [4979924.022746904, -4578937.103866149, -38.970749705803826]; 10 s pos: [4979946.828228602, -4578911.57810505, -38.97214347984678]"
+    }
+  ],
+  "summary": {
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "all_passed": true
+  }
+}

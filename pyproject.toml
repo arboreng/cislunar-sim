@@ -1,0 +1,144 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cislunar-sim"
+version = "1.0.0"
+description = "High-fidelity cislunar spacecraft simulation cross-validated against LightSail 2 mission data"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Arbor Engineering Group", email = "sean@arboreng.com" },
+]
+keywords = [
+    "spacecraft",
+    "astrodynamics",
+    "orbital-mechanics",
+    "cislunar",
+    "solar-sail",
+    "ion-thruster",
+    "simulation",
+    "guidance",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.24",
+    "astropy>=5.3",
+    "nrlmsise00>=0.1",
+]
+
+[project.optional-dependencies]
+# TLE propagation and telemetry replay against CelesTrak / SatNOGS data.
+validation = [
+    "sgp4>=2.22",
+]
+# Full development toolchain.
+dev = [
+    "build>=1.0",
+    "pytest>=7",
+    "pytest-cov>=4",
+    "sgp4>=2.22",
+    "nrlmsise00>=0.1",
+    "ruff>=0.4",
+    "pyright>=1.1",
+    "pre-commit>=3.7",
+]
+
+[project.urls]
+Homepage = "https://github.com/arboreng/cislunar-sim"
+Repository = "https://github.com/arboreng/cislunar-sim"
+Issues = "https://github.com/arboreng/cislunar-sim/issues"
+Changelog = "https://github.com/arboreng/cislunar-sim/blob/main/CHANGELOG.md"
+
+[project.scripts]
+cislunar-bench = "cislunar.validation.physics_benchmark:main"
+cislunar-export-oem = "cislunar.validation.trajectory_export:main"
+
+# ── Hatch ─────────────────────────────────────────────────────────────────────
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cislunar"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "tests/",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "README.md",
+]
+exclude = [
+    "validation/data/*.json",
+    "validation/data/*.csv",
+    "validation/data/*.xml",
+    "validation/data/raw_pages/",
+    "src/cislunar/validation/light_sail_2/eclipse_window_review.csv",
+    "src/cislunar/validation/data/*.json",
+    "src/cislunar/validation/data/raw_pages/",
+]
+
+# ── Pytest ────────────────────────────────────────────────────────────────────
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --tb=short -m \"not network and not perf\""
+markers = [
+    "network: hits external network services; run with -m network explicitly",
+    "perf: timing-sensitive benchmarks; excluded from CI, run locally with -m perf",
+]
+
+# ── Ruff ──────────────────────────────────────────────────────────────────────
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501",   # line too long — formatter handles this
+    "E741",   # ambiguous variable name — physics notation (I, l) is standard
+    "B905",   # zip() without strict= — array lengths guaranteed by construction
+    "SIM105", # contextlib.suppress — try/except/pass is clearer
+    "SIM108", # ternary operator — not always more readable
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ── Pyright ───────────────────────────────────────────────────────────────────
+
+[tool.pyright]
+include = ["src"]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+venvPath = "."
+venv = ".venv"

@@ -1,0 +1,66 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Vim / editors
+.*.swp
+*.orig
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / build artifacts
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
+.eggs/
+
+# Test and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Type checker and linter caches
+.mypy_cache/
+.ruff_cache/
+.pyright/
+.pyre/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# External mission data (large; see validation/data/README.md)
+validation/data/*.json
+validation/data/*.csv
+validation/data/*.xml
+!validation/data/README.md
+validation/data/raw_pages/
+# Legacy package-local path kept ignored during migration.
+src/cislunar/validation/data/*.json
+src/cislunar/validation/data/*.csv
+src/cislunar/validation/data/*.xml
+src/cislunar/validation/data/raw_pages/
