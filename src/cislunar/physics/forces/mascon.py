@@ -81,7 +81,7 @@ def _body_to_eci(moon_pos_eci: NDArray[np.float64]) -> NDArray[np.float64]:
         zn = np.linalg.norm(z_axis)
     z_axis /= zn
     y_axis = np.cross(z_axis, x_axis)
-    return np.column_stack([x_axis, y_axis, z_axis])
+    return np.column_stack([x_axis, y_axis, z_axis]).astype(np.float64)
 
 
 def lunar_mascon_acceleration(
