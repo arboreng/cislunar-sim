@@ -4,6 +4,12 @@ All notable changes to cislunar-sim will be documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Fixed
+
+- Lunar mascon rotation matrix (`_body_to_eci`) now explicitly casts to `float64`, fixing a pyright `reportReturnType` failure
+
 ## [1.0.0] — 2026-06-08
 
 Initial public release.
