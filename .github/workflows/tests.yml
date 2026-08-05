@@ -22,8 +22,9 @@ jobs:
           python-version: "3.12"
           cache: pip
 
+      # Pinned: keep in sync with .pre-commit-config.yaml and pyproject [dev].
       - name: Install ruff
-        run: pip install "ruff>=0.4"
+        run: pip install "ruff==0.15.20"
 
       - name: Check lint
         run: ruff check .

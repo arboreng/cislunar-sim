@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- `ruff` and `pyright` are now version-constrained across the `dev` extra, pre-commit, and CI. A floating `ruff>=0.4` had let ruff 0.16 — which began formatting Python blocks inside Markdown — fail CI on unrelated pull requests. The `dev` extra allows `ruff~=0.15.20`; `pyright` takes an exact pin because it has only ever released 1.1.x, which leaves `~=` unbounded
+
 ### Fixed
 
 - Lunar mascon rotation matrix (`_body_to_eci`) now explicitly casts to `float64`, fixing a pyright `reportReturnType` failure
