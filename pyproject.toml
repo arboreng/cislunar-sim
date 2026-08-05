@@ -54,8 +54,13 @@ dev = [
     "pytest-cov>=4",
     "sgp4>=2.22",
     "nrlmsise00>=0.1",
-    "ruff>=0.4",
-    "pyright>=1.1",
+    # Linters are constrained: a floating version turns an upstream release into
+    # a CI failure on an unrelated PR. Bumps come via Dependabot's dev-deps group.
+    # The two differ because ~= means different things here: ruff is 0.x, so
+    # ~=0.15.20 takes 0.15 patches but blocks the breaking 0.16, while pyright
+    # has only ever shipped 1.1.x, leaving ~=1.1.411 with no upper bound at all.
+    "ruff~=0.15.20",
+    "pyright==1.1.411",
     "pre-commit>=3.7",
 ]
 
