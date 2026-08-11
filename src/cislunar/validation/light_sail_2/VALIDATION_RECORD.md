@@ -68,35 +68,81 @@ because SRP is a small perturbation over a single orbit at 585 km altitude.
 
 ## 2. B* drag swing analysis
 
-**Method:** The full GP-series archive (CelesTrak, NORAD 44420, Jul 2019–Nov 2022)
-is split into two windows:
-- **Sailing window** (2019-07-23 to 2019-12-01): active sail deployment; SRP partially
-  offsets atmospheric drag, so TLE fitters observe lower net deceleration and fit lower B*.
-- **Passive window** (2020-03-01 to 2022-11-17): sail furled; drag-dominated.
+> **Status: suggestive, not confirming.** The premise of this comparison was
+> wrong and the result is confounded. Both are documented below rather than
+> removed, because the numbers are real and the failure mode is instructive.
+> Do not cite the 1.3 % agreement as validation of the force model.
 
-The predicted ratio of sailing-to-passive B* follows from Spencer et al. (2021):
-`ratio ≈ 1 − (SRP_force / Drag_force)`.
+**Method:** The full GP-series archive (CelesTrak, NORAD 44420, Jul 2019–Nov 2022)
+is split into two hardcoded date windows and the fitted BSTAR field is averaged
+within each:
+
+- **Early window** (2019-07-23 to 2019-12-01), 180 TLEs
+- **Late window** (2020-03-01 to 2022-11-17), 2,258 TLEs
+
+Note that these are date ranges only. Nothing in `compute_bstar_swing` inspects
+attitude, sail state, or spacecraft mode; the window boundaries are constants.
 
 **Results (post-fix run 2026-06-03):**
 
 | Window | N TLEs | Mean B* | Std B* |
 |--------|--------|---------|--------|
-| Sailing | 180 | 1.127 × 10⁻³ | 4.42 × 10⁻⁴ |
-| Passive | 2,258 | 4.883 × 10⁻³ | 6.80 × 10⁻³ |
+| Early | 180 | 1.127 × 10⁻³ | 4.42 × 10⁻⁴ |
+| Late | 2,258 | 4.883 × 10⁻³ | 6.80 × 10⁻³ |
 
 - **Observed ratio:** 0.231
-- **Predicted ratio:** 0.228 (Spencer et al. 2021, AAS 21-300)
+- **Predicted ratio:** 0.228, computed here from `(F_drag − F_SRP) / F_drag`
+  using the formulation in Spencer et al. (2021), AAS 21-300 — not a figure
+  published by that paper
 - **Relative error:** 1.3 %
 
-This is the strongest quantitative signal in the validation record. The
-cislunar-sim force model reproduces the long-baseline B* swing with better
-than 2 % accuracy. The corrected SRP model (α applied correctly, ~72 % larger
-net force) leaves this result unchanged because the B* swing is observed from
-the TLE archive directly; the predicted ratio is bounded by orbital-mechanics
-constraints that are insensitive to the ~6 % absorptivity correction at this
-altitude.
+### Why this is not the validation it appears to be
 
----
+**The sail was never furled.** These windows were originally labelled *sailing*
+and *passive*, on the premise that LightSail 2 stowed its sail after the primary
+mission. It did not. The sail deployed on 2019-07-23 via tape-measure booms and
+remained deployed until reentry on 2022-11-17; the mechanism was not retractable.
+What varied was attitude — the spacecraft slewed between face-on and edge-on, a
+cadence regularly interrupted by momentum-wheel desaturation. So the physical
+contrast the comparison assumed does not exist, and any real effect would be the
+weaker one of time-averaged effective sail area.
+
+**The windows are confounded.** They differ in more than sail behaviour:
+
+| | Early window | Late window |
+|---|---|---|
+| Solar activity | Cycle 25 minimum | Cycle 25 ramp |
+| Altitude | near-initial (~720 km) | decaying to reentry |
+
+Fitted B* is not a clean ballistic coefficient. It absorbs density-model error,
+and SGP4's atmosphere is a fixed profile not driven by observed F10.7. As true
+density outruns that profile — which is what happens across a solar ramp — fitted
+B* rises. Altitude decay pushes the same way. All three candidate causes act in
+the same direction, and this analysis cannot separate them.
+
+**The prediction is a single-point calculation.** `predicted_ratio` is evaluated
+at one fixed condition — 720 km, F10.7 = 100, ρ = 2.5 × 10⁻¹⁴ kg/m³ — while the
+late window runs to reentry, where density is orders of magnitude higher. The
+predicted ratio therefore describes conditions holding only at the very start of
+the archive it is compared against.
+
+Under those conditions, agreement to 1.3 % is better read as coincidence than as
+confirmation.
+
+### What would make this a real test
+
+- Restrict both windows to comparable F10.7 bands and comparable altitude shells,
+  so the residual difference is attributable to sail behaviour
+- Normalise fitted B* against a contemporaneous non-sailing reference object in a
+  similar orbit, absorbing the shared density-model error
+- Evaluate the predicted ratio at the actual altitude and flux of each window
+  rather than at a single representative point
+
+Until then this is an observation in search of a controlled comparison. The
+corrected SRP model (α applied correctly, ~72 % larger net force) does not change
+the observed ratio, which is read directly from the archive; it does change the
+predicted ratio, which is computed from the force model, so the 0.228 figure
+above is a post-fix value.
 
 ## 3. Eclipse timing comparison
 
