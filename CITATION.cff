@@ -9,13 +9,19 @@ abstract: >
   SRP, atmospheric drag, eclipse shadowing, attitude dynamics), JPL-quality
   DE430 ephemeris, and Q-law orbital guidance laws.
 authors:
-  - name: "Arbor Engineering Group"
+  - family-names: "O'Hara"
+    given-names: "Sean"
+    affiliation: "Arbor Engineering Group"
     email: sean@arboreng.com
 version: "1.0.0"
 date-released: "2026-06-08"
 license: MIT
 repository-code: "https://github.com/arboreng/cislunar-sim"
-url: "https://github.com/arboreng/cislunar-sim"
+url: "https://arboreng.com/field-notes/cislunar-sim"
+identifiers:
+  - type: url
+    value: "https://pypi.org/project/cislunar-sim/"
+    description: "The released package on PyPI"
 keywords:
   - spacecraft
   - astrodynamics
@@ -25,3 +31,4 @@ keywords:
   - ion thruster
   - simulation
   - guidance
+  - scientific software
