@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-`cislunar-sim` is a Python library for simulating spacecraft trajectories from low Earth orbit through cislunar space. It provides a high-fidelity, validated physics engine and Q-law orbital guidance laws — without the XML configuration of GMAT or the Java dependency of Orekit.
+`cislunar-sim` is a Python library for simulating spacecraft trajectories from low Earth orbit through cislunar space. It provides a high-fidelity, validated physics engine and Q-law orbital guidance laws as a library you import — not an application you drive with mission scripts, like GMAT, or a JVM you host from Python, like Orekit.
 
 ## Why cislunar-sim?
 

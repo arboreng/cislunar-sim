@@ -15,6 +15,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 
 - Lunar mascon rotation matrix (`_body_to_eci`) now explicitly casts to `float64`, fixing a pyright `reportReturnType` failure
+- The README described cislunar-sim as an alternative to "the XML configuration of GMAT". GMAT is not XML-configured — missions are `.script` files using `Create`/assignment syntax — so the comparison now names the real difference: an importable library versus an application driven by mission scripts. This text is the PyPI long description, so the correction reaches PyPI on the next release
 
 ## [1.0.0] — 2026-06-08
 
