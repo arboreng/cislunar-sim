@@ -65,7 +65,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/arboreng/cislunar-sim"
+Homepage = "https://arboreng.com/field-notes/cislunar-sim"
 Repository = "https://github.com/arboreng/cislunar-sim"
 Issues = "https://github.com/arboreng/cislunar-sim/issues"
 Changelog = "https://github.com/arboreng/cislunar-sim/blob/main/CHANGELOG.md"

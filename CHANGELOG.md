@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - `ruff` and `pyright` are now version-constrained across the `dev` extra, pre-commit, and CI. A floating `ruff>=0.4` had let ruff 0.16 — which began formatting Python blocks inside Markdown — fail CI on unrelated pull requests. The `dev` extra allows `ruff~=0.15.20`; `pyright` takes an exact pin because it has only ever released 1.1.x, which leaves `~=` unbounded
 - `CITATION.cff` now credits Sean O'Hara with an `Arbor Engineering Group` affiliation rather than the organisation alone, so citations name the author; `url` points at the project's landing page instead of duplicating `repository-code`, and the PyPI release is recorded under `identifiers`
+- `Homepage` in `[project.urls]` now points at the project's landing page on arboreng.com rather than repeating the `Repository` URL, so the PyPI listing links somewhere the repository does not already cover. Takes effect on the next release
 
 ### Fixed
 
