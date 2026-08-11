@@ -10,7 +10,7 @@
 | Section | Data source | Reproducible from a fresh clone? |
 |---------|-------------|----------------------------------|
 | §1 Orbit replay | 5 bundled TLEs (SGP4-propagated) | **Yes** — runs via `make test` |
-| §2 B\* swing | Full CelesTrak GP-history archive (2,438 TLEs) | No — see `validation/data/README.md` |
+| §2 B\* swing | Full CelesTrak GP-history archive (2,680 TLEs) | No — see `validation/data/README.md` |
 | §3 Eclipse timing | SatNOGS beacon frames (13,917 frames) | No — see `validation/data/README.md` |
 | §4 Attitude envelope | SatNOGS beacon frames (9,406 ADCS frames) | No — see `validation/data/README.md` |
 
@@ -80,6 +80,10 @@ within each:
 - **Early window** (2019-07-23 to 2019-12-01), 180 TLEs
 - **Late window** (2020-03-01 to 2022-11-17), 2,258 TLEs
 
+The archive holds 2,680 records; 2,438 fall inside one of the two windows. The
+remaining 242 are excluded — 10 before the early window opens, 164 in the gap
+between the windows, and 68 rejected by the B* plausibility filter.
+
 Note that these are date ranges only. Nothing in `compute_bstar_swing` inspects
 attitude, sail state, or spacecraft mode; the window boundaries are constants.
 
@@ -120,6 +124,15 @@ density outruns that profile — which is what happens across a solar ramp — f
 B* rises. Altitude decay pushes the same way. All three candidate causes act in
 the same direction, and this analysis cannot separate them.
 
+**The window boundaries discard the transition.** The two windows are not
+adjacent: 2019-12-01 to 2020-03-01 falls in neither, dropping 164 TLEs, 6 % of the
+archive. Nothing in the code or in this record explains the gap. Whatever it was
+originally for, its effect is to remove the period in which any change in
+behaviour would actually appear, which makes a step between the two windows look
+cleaner than the underlying series supports. An undocumented exclusion sitting on
+the boundary a comparison depends on is a defect in its own right, independent of
+the confounds above.
+
 **The prediction is a single-point calculation.** `predicted_ratio` is evaluated
 at one fixed condition — 720 km, F10.7 = 100, ρ = 2.5 × 10⁻¹⁴ kg/m³ — while the
 late window runs to reentry, where density is orders of magnitude higher. The
@@ -138,11 +151,16 @@ confirmation.
 - Evaluate the predicted ratio at the actual altitude and flux of each window
   rather than at a single representative point
 
-Until then this is an observation in search of a controlled comparison. The
-corrected SRP model (α applied correctly, ~72 % larger net force) does not change
-the observed ratio, which is read directly from the archive; it does change the
-predicted ratio, which is computed from the force model, so the 0.228 figure
-above is a post-fix value.
+**The prediction does not exercise the library's force model.** `predicted_ratio`
+is computed inline in `compute_bstar_swing` from literal constants — ρ, v, C_D,
+area, mass, reflectivity, P_SRP — and never calls `SolarSailModel` or any other
+part of `cislunar.physics`. Agreement between observed and predicted therefore
+says nothing about whether this library's physics is correct; it compares a
+hand-written formula against an observation. This is also why the SRP absorptivity
+fix (α applied correctly, ~72 % larger net force) leaves both numbers unchanged:
+neither is derived from the model that was fixed.
+
+Until then this is an observation in search of a controlled comparison.
 
 ## 3. Eclipse timing comparison
 
