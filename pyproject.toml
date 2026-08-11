@@ -59,7 +59,7 @@ dev = [
     # The two differ because ~= means different things here: ruff is 0.x, so
     # ~=0.15.20 takes 0.15 patches but blocks the breaking 0.16, while pyright
     # has only ever shipped 1.1.x, leaving ~=1.1.411 with no upper bound at all.
-    "ruff~=0.15.20",
+    "ruff>=0.15.20,<0.17.0",
     "pyright==1.1.411",
     "pre-commit>=3.7",
 ]
