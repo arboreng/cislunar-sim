@@ -133,9 +133,15 @@ this repo.
 
 | Metric | Result | Requires |
 |---|---|---|
-| B\* swing ratio (sailing / passive) | 0.231 observed vs 0.228 predicted | CelesTrak GP archive |
+| B\* swing ratio (early / late window) | 0.231 observed vs 0.228 predicted — **confounded, see note** | CelesTrak GP archive |
 | Eclipse timing (entry residuals) | mean +3.7 s, std 19.5 s | SatNOGS beacon data |
 | Body-rate envelope | 0% of frames above model cap | SatNOGS beacon data |
+
+> **On the B\* swing:** the two windows differ in solar activity and altitude as
+> well as sail behaviour, and the sail was never furled — it deployed in July 2019
+> and stayed deployed until reentry. The agreement is suggestive, not confirming.
+> [VALIDATION_RECORD.md §2](src/cislunar/validation/light_sail_2/VALIDATION_RECORD.md)
+> explains what would be needed to make it a controlled test.
 
 See [`src/cislunar/validation/light_sail_2/VALIDATION_RECORD.md`](src/cislunar/validation/light_sail_2/VALIDATION_RECORD.md)
 for full methodology and [`validation/data/README.md`](validation/data/README.md)

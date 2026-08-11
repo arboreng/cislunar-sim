@@ -470,30 +470,37 @@ def available_lightsail2_epochs() -> list[str]:
 # ── B* swing analysis ─────────────────────────────────────────────────────────
 # Free add-on: no new data needed beyond the existing GP archive.
 #
-# During active sail-raising (Jul–Dec 2019) SRP partially offsets atmospheric
-# drag, so TLE fitters observe a lower net deceleration → lower effective B*.
-# This function extracts B* from every TLE in the archive and compares the
-# sailing-active window against passive-drift periods.
+# Hypothesis: during active sail-raising (Jul–Dec 2019) SRP partially offsets
+# atmospheric drag, so TLE fitters observe a lower net deceleration → lower
+# effective B*. This function extracts B* from every TLE in the archive and
+# compares the early (near-deployment) window against a later window.
 #
-# Reference sailing window: Spencer et al. 2021 (AAS 21-300).
-# Primary arc: 2019-07-23 (sail deployment) through 2019-12-01.
+# The comparison does not establish that hypothesis. The windows also differ in
+# solar activity (Cycle 25 minimum vs. ramp) and altitude (near-initial vs.
+# decaying to reentry), both of which raise fitted B* in the same direction, and
+# the sail was never furled — it deployed in Jul 2019 and stayed deployed until
+# reentry, so the contrast is at most one of time-averaged effective sail area.
+# See VALIDATION_RECORD.md section 2 before citing this result.
+#
+# Reference formulation: Spencer et al. 2021 (AAS 21-300).
+# Early arc: 2019-07-23 (sail deployment) through 2019-12-01.
 
 
 @dataclass
 class BStarSwingResult:
     """
-    B* comparison between active-sailing and passive-drift orbit arcs.
+    B* comparison between two date windows of the GP archive.
 
     Fields
     ------
     sailing_bstar_mean   : mean B* [1/Earth-radii] during sailing window
     sailing_bstar_std    : std dev of B* during sailing window
-    passive_bstar_mean   : mean B* during passive-drift window
-    passive_bstar_std    : std dev of B* during passive-drift window
+    passive_bstar_mean   : mean B* during the later window
+    passive_bstar_std    : std dev of B* during the later window
     observed_ratio       : sailing_bstar_mean / passive_bstar_mean
     predicted_ratio      : ratio predicted by drag + SRP model
     n_sailing            : number of TLEs in sailing window
-    n_passive            : number of TLEs in passive-drift window
+    n_passive            : number of TLEs in the later window
     sailing_window       : (start_iso, end_iso) date strings
     passive_window       : (start_iso, end_iso) date strings
     notes                : human-readable interpretation
@@ -536,22 +543,27 @@ def compute_bstar_swing(
     passive_end: str = "2022-11-17",
 ) -> BStarSwingResult:
     """
-    Compare B* values between sail-active and passive-drift periods.
+    Compare mean fitted B* between two date windows of the GP archive.
 
     Extracts the BSTAR field from every TLE in the GP archive and computes
-    descriptive statistics for two date windows.  The expected finding is that
-    mean B* is lower during active sailing because SRP partially offsets drag,
-    reducing the apparent deceleration that TLE fitters attribute to B*.
+    descriptive statistics for two hardcoded date windows. Nothing here inspects
+    attitude or sail state -- the windows are date ranges only.
+
+    The original hypothesis was that mean B* would be lower near deployment
+    because SRP partially offsets drag. Treat any such difference as suggestive
+    only: the windows also differ in solar activity and altitude, both of which
+    move fitted B* the same way, and this comparison cannot separate them. See
+    VALIDATION_RECORD.md section 2.
 
     The predicted_ratio is estimated from the ratio of (drag − SRP along-track)
     to drag-only deceleration at a representative orbit (720 km, F10.7=100).
 
     Args:
         json_path:      Path to CelesTrak OMM JSON archive.
-        sailing_start:  ISO date for start of primary sailing window.
-        sailing_end:    ISO date for end of primary sailing window.
-        passive_start:  ISO date for start of passive-drift window.
-        passive_end:    ISO date for end of passive-drift window.
+        sailing_start:  ISO date for start of the early window.
+        sailing_end:    ISO date for end of the early window.
+        passive_start:  ISO date for start of the later window.
+        passive_end:    ISO date for end of the later window.
 
     Returns:
         BStarSwingResult with statistics and a predicted ratio from the model.
@@ -652,18 +664,27 @@ def compute_bstar_swing(
     # deceleration, so B*_sailing / B*_passive ≈ (F_drag − F_srp) / F_drag.
     pred_ratio = max(0.0, (f_drag - f_srp_orbit) / f_drag) if f_drag > 0 else float("nan")
 
+    # The windows differ in solar activity and altitude as well as in sail
+    # behaviour, and all three push fitted B* the same way, so the same caveat
+    # applies whichever direction the ratio falls. Stating it only for the
+    # unexpected direction — as this did previously — reads the expected result
+    # as confirmation and the unexpected one as noise.
+    confound = (
+        " Windows differ in solar activity and altitude as well as sail state; "
+        "this comparison cannot separate those causes."
+    )
     if obs_ratio < 1.0:
         interpretation = (
-            f"B* lower during sailing (Δ = {(1 - obs_ratio) * 100:.1f}% reduction) — "
-            "consistent with SRP partially offsetting drag."
+            f"B* lower in the early window (Δ = {(1 - obs_ratio) * 100:.1f}% reduction) — "
+            "the direction expected if SRP partially offsets drag." + confound
         )
     elif obs_ratio > 1.0:
         interpretation = (
-            f"B* higher during sailing (ratio = {obs_ratio:.3f}) — "
-            "unexpected; may reflect sail orientation strategy or solar-cycle effects."
+            f"B* higher in the early window (ratio = {obs_ratio:.3f}) — "
+            "opposite to the SRP-offset expectation." + confound
         )
     else:
-        interpretation = "B* unchanged between windows."
+        interpretation = "B* unchanged between windows." + confound
 
     return BStarSwingResult(
         sailing_bstar_mean=sail_mean,

@@ -1180,7 +1180,9 @@ class TestComputeBStarSwing:
         assert result.sailing_bstar_mean == pytest.approx(0.0012)
         assert result.passive_bstar_mean == pytest.approx(0.0050)
         assert result.observed_ratio == pytest.approx(0.24)
-        assert "lower during sailing" in result.notes
+        assert "lower in the early window" in result.notes
+        # The confound must be stated whichever direction the ratio falls.
+        assert "cannot separate those causes" in result.notes
 
     def test_raises_when_window_has_no_usable_records(self, tmp_path):
         path = tmp_path / "gp.json"
@@ -1297,17 +1299,17 @@ class TestSailArcOrbitalParameters:
 
 class TestSailArcBStarSignal:
     """
-    B* during active sailing must be consistent with the published B* swing result.
+    Fitted B* in the early archive window must stay well below the late-window mean.
 
-    During active sail-raising, SRP partially offsets atmospheric drag, so
-    TLE fitters observe a lower net deceleration and fit a lower B*.
-    The validation record shows sailing-window mean B* ≈ 1.13e-3 vs.
-    passive-drift mean 4.88e-3 (ratio ≈ 0.23, predicted 0.228 — Spencer et al.
-    2021, AAS 21-300).  This fixture covers the early sailing window, where B*
-    should be notably below the passive-drift value.
+    This is a regression guard on the fixture, not a validation of the force
+    model. The early window (near sail deployment) has mean B* ~= 1.13e-3 against
+    a late-window mean of 4.88e-3, a ratio of ~0.23. That difference is real but
+    its cause is not established: the windows differ in solar activity and
+    altitude as well as sail behaviour, and the sail was never furled. See
+    VALIDATION_RECORD.md section 2.
     """
 
-    _PASSIVE_DRIFT_MEAN_BSTAR = 4.88e-3  # from full-archive B* swing analysis
+    _LATE_WINDOW_MEAN_BSTAR = 4.88e-3  # from full-archive B* swing analysis
 
     def test_bstar_values_are_physically_plausible(self):
         with open(_SAIL_ARC_FIXTURE) as f:
@@ -1318,16 +1320,15 @@ class TestSailArcBStarSignal:
             f"Implausible B* value found; range: [{min(bstars):.4e}, {max(bstars):.4e}]"
         )
 
-    def test_mean_bstar_lower_than_passive_drift(self):
-        """Sailing-window mean B* must be well below the passive-drift value."""
+    def test_mean_bstar_lower_than_late_window(self):
+        """Early-window mean B* must stay well below the late-window value."""
         with open(_SAIL_ARC_FIXTURE) as f:
             records = json.load(f)
         bstars = [float(r["BSTAR"]) for r in records if r.get("BSTAR") is not None]
         mean_bstar = float(np.mean(bstars))
-        assert mean_bstar < self._PASSIVE_DRIFT_MEAN_BSTAR * 0.5, (
-            f"Expected sailing mean B* < {self._PASSIVE_DRIFT_MEAN_BSTAR * 0.5:.4e} "
-            f"(half of passive mean), got {mean_bstar:.4e}. "
-            "SRP should suppress effective drag during active sail-raising."
+        assert mean_bstar < self._LATE_WINDOW_MEAN_BSTAR * 0.5, (
+            f"Expected early-window mean B* < {self._LATE_WINDOW_MEAN_BSTAR * 0.5:.4e} "
+            f"(half the late-window mean), got {mean_bstar:.4e}."
         )
 
 
