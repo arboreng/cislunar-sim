@@ -14,6 +14,31 @@
 | §3 Eclipse timing | SatNOGS beacon frames (13,917 frames) | No — see `validation/data/README.md` |
 | §4 Attitude envelope | SatNOGS beacon frames (9,406 ADCS frames) | No — see `validation/data/README.md` |
 
+### Envelope
+
+Two different claims are easy to conflate here, so they are separated.
+
+**Validated against external data: 579–717 km.** That is the band the five
+bundled epochs span, and §1 is the only place results are compared against
+something outside this repository — SGP4-propagated states, with quantified
+error. Accuracy claims apply here and nowhere else.
+
+**Exercised with sanity checks: roughly 185 km upward.** The atmosphere model is
+tested from 200 to 1500 km, `examples/drag_decay_leo.py` runs at 400 km, and
+`examples/gto_periapsis_raise.py` has a 185 km periapsis. These tests check
+direction, monotonicity and order of magnitude — density falls with altitude,
+drag opposes velocity, ΔSMA is negative under drag — not agreement with any
+reference. Passing them means the model is self-consistent, not that it is right.
+
+Below 579 km, then, the engine runs and behaves plausibly but has never been
+checked against truth. Drag is an NRLMSISE-00 proxy and error grows quickly as
+altitude falls. A reentry crossing is detected as a terminal event at 80 km, but
+nothing validates the trajectory that reaches it.
+
+§2 sits in that gap. Its archive runs to 366 km, roughly 200 km below anything §1
+validates, which is a further reason it is marked suggestive rather than
+confirming.
+
 **§1 is the only section reproducible without external files.**  Sections §2–§4
 require mission-data files in `validation/data/` that are not bundled with the
 repo (file sizes: GP archive ~12 MB JSON, SatNOGS beacons ~4 MB JSON).

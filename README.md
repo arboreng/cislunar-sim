@@ -125,6 +125,20 @@ NORAD 44420).  These run automatically via `make test`.
 
 The along-track drift is drag-dominated and expected; see the validation record for details.
 
+### Envelope
+
+**Validated against external data: 579–717 km** — the band the bundled LightSail 2
+epochs span, and the only place results are compared against something outside this
+repository.
+
+**Exercised with sanity checks from about 185 km upward** — the atmosphere model is
+tested from 200 to 1500 km and the examples run at 400 km and a 185 km periapsis,
+but those tests check direction and order of magnitude, not accuracy. Below 579 km
+the engine runs and behaves plausibly; it has not been checked against truth, and
+drag error grows quickly as altitude falls.
+
+See [VALIDATION_RECORD.md](src/cislunar/validation/light_sail_2/VALIDATION_RECORD.md).
+
 ### Requires external mission files
 
 The B\* swing analysis and eclipse/attitude comparisons use the full CelesTrak
