@@ -48,15 +48,20 @@ engine then replays each one-hour segment from the previous state, with the full
 force model active (J2 + Moon/Sun third-body + atmospheric drag + solar sail SRP).
 Errors are computed as position and SMA deviations from the SGP4-propagated reference.
 
-**Results (1-day archival epoch, post-fix run 2026-06-03):**
+**Results (1-day archival epoch, re-run 2026-08-11):**
 
 | Metric | Result | Threshold |
 |--------|--------|-----------|
-| SMA error | 0.0112 % | 0.1 % |
-| Radial (R) error | 0.471 km (0.007 % of orbit radius) | — |
-| Along-track (T) error | 19.534 km mean | Drag-dominated (expected) |
-| Position error | mean 19.55 km · rms 25.83 km · max 54.96 km | — |
-| Velocity error | mean 20.7 m/s · rms 27.3 m/s | — |
+| SMA error | 0.0113 % | 0.1 % |
+| Radial (R) error | 0.449 km (0.006 % of orbit radius) | — |
+| Along-track (T) error | 19.559 km mean | Drag-dominated (expected) |
+| Position error | mean 19.58 km · rms 25.97 km · max 54.84 km | — |
+| Velocity error | mean 21.3 m/s · rms 28.3 m/s | — |
+
+Figures move slightly between runs as dependency versions change. The 2026-06-03
+run reported SMA 0.0112 %, radial 0.471 km, along-track 19.534 km; the radial
+term has since moved by ~5 % and the velocity terms by ~3 %, with the rest inside
+1 %. Quote these to the precision the re-run date supports, not beyond it.
 
 The along-track error dominates the radial error by a factor > 40, consistent
 with unmodelled drag perturbations driving orbital phase drift rather than
@@ -71,7 +76,7 @@ because SRP is a small perturbation over a single orbit at 585 km altitude.
 > **Status: suggestive, not confirming.** The premise of this comparison was
 > wrong and the result is confounded. Both are documented below rather than
 > removed, because the numbers are real and the failure mode is instructive.
-> Do not cite the 1.3 % agreement as validation of the force model.
+> Do not cite the ~1 % agreement as validation of the force model.
 
 **Method:** The full GP-series archive (CelesTrak, NORAD 44420, Jul 2019–Nov 2022)
 is split into two hardcoded date windows and the fitted BSTAR field is averaged
@@ -82,7 +87,29 @@ within each:
 
 The archive holds 2,680 records; 2,438 fall inside one of the two windows. The
 remaining 242 are excluded — 10 before the early window opens, 164 in the gap
-between the windows, and 68 rejected by the B* plausibility filter.
+between the windows, and 68 discarded for reporting a negative B*.
+
+That last filter is worth naming precisely, because it changes the result.
+Its stated purpose is to remove implausible values, but the
+`abs(bstar) > 1.0` arm never fires on this archive: every exclusion is a
+negative coefficient. A negative B* is not noise — it is what a fitter
+reports when an object gains orbital energy rather than loses it. Of the 68,
+**none fall in the early window**; 61 are in the late window and 7 predate
+the early one, so the filter acts on one side of the comparison only.
+
+Recomputing with those records included:
+
+| | Early mean B* | Late mean B* | Observed ratio | Error vs 0.228 |
+|---|---|---|---|---|
+| As published (`B* >= 0`) | 1.1268e-03 | 4.8829e-03 | 0.2308 | ~1 % |
+| Negatives included | 1.1268e-03 | 4.7474e-03 | 0.2373 | ~4 % |
+
+Discarding the negatives raises the late-window mean, lowers the ratio, and
+improves agreement with the prediction by close to a factor of four. The
+choice itself is defensible — many negative fits are genuinely noise on short
+arcs. What was not defensible was leaving it undocumented, describing it as a
+plausibility filter when it only ever removes negatives, and never measuring
+its effect on the headline number.
 
 Note that these are date ranges only. Nothing in `compute_bstar_swing` inspects
 attitude, sail state, or spacecraft mode; the window boundaries are constants.
@@ -98,7 +125,13 @@ attitude, sail state, or spacecraft mode; the window boundaries are constants.
 - **Predicted ratio:** 0.228, computed here from `(F_drag − F_SRP) / F_drag`
   using the formulation in Spencer et al. (2021), AAS 21-300 — not a figure
   published by that paper
-- **Relative error:** 1.3 %
+- **Relative error:** ~1 %, and not meaningfully more precise than that. The
+  observed ratio is 0.2308 and the prediction 0.2284 before rounding, so the
+  error is 1.0–1.3 % depending on where each is rounded. The prediction is built
+  from 2-significant-figure constants — ρ, C_D, sail reflectivity, a hardcoded
+  40 % orbit-mean efficiency — and never supported two digits. Earlier versions
+  of this record quoted 1.3 %, which implied a resolution the calculation cannot
+  deliver.
 
 ### Why this is not the validation it appears to be
 
@@ -139,7 +172,7 @@ late window runs to reentry, where density is orders of magnitude higher. The
 predicted ratio therefore describes conditions holding only at the very start of
 the archive it is compared against.
 
-Under those conditions, agreement to 1.3 % is better read as coincidence than as
+Under those conditions, agreement of ~1 % is better read as coincidence than as
 confirmation.
 
 ### What would make this a real test
