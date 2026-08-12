@@ -24,7 +24,7 @@ jobs:
 
       # Pinned: keep in sync with .pre-commit-config.yaml and pyproject [dev].
       - name: Install ruff
-        run: pip install "ruff==0.15.20"
+        run: pip install "ruff==0.16.2"
 
       - name: Check lint
         run: ruff check .
