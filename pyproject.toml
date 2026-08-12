@@ -57,9 +57,9 @@ dev = [
     # Linters are constrained: a floating version turns an upstream release into
     # a CI failure on an unrelated PR. Bumps come via Dependabot's dev-deps group.
     # The two differ because ~= means different things here: ruff is 0.x, so
-    # ~=0.15.20 takes 0.15 patches but blocks the breaking 0.16, while pyright
-    # has only ever shipped 1.1.x, leaving ~=1.1.411 with no upper bound at all.
-    "ruff~=0.15.20",
+    # ~=0.16.0 takes 0.16 patches but blocks the next breaking minor, while
+    # pyright has only ever shipped 1.1.x, so ~=1.1.411 would bound nothing.
+    "ruff~=0.16.0",
     "pyright==1.1.411",
     "pre-commit>=3.7",
 ]
@@ -114,6 +114,15 @@ markers = [
 line-length = 100
 target-version = "py311"
 src = ["src"]
+# ruff 0.16 formats Python inside Markdown fences. The blocks in our docs are
+# examples for other tools, Orekit and GMAT snippets a reader pastes elsewhere,
+# with assignments aligned for readability. Formatting them to this project's
+# style makes the documentation worse, so Markdown is out of scope.
+extend-exclude = ["*.md"]
+# force-exclude so the rule holds when a path is passed explicitly, which is how
+# pre-commit invokes ruff, otherwise the exclusion applies to CI's directory
+# scan but silently not to the hook.
+force-exclude = true
 
 [tool.ruff.lint]
 select = [
