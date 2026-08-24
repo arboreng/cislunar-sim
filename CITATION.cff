@@ -13,8 +13,8 @@ authors:
     given-names: "Sean"
     affiliation: "Arbor Engineering Group"
     email: sean@arboreng.com
-version: "1.0.0"
-date-released: "2026-06-08"
+version: "1.0.1"
+date-released: "2026-08-24"
 license: MIT
 repository-code: "https://github.com/arboreng/cislunar-sim"
 url: "https://arboreng.com/field-notes/cislunar-sim"

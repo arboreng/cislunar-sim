@@ -6,12 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.1] — 2026-08-24
+
 ### Changed
 
 - `ruff` moves to 0.16, which formats Python inside Markdown fences. The code blocks in this repository's docs are examples for other tools — Orekit and GMAT snippets a reader pastes elsewhere, with assignments aligned for readability — so Markdown is excluded from ruff's scope rather than reformatted. `force-exclude` is set because pre-commit passes paths explicitly, where a plain `extend-exclude` would apply to CI's directory scan but not to the hook
 - `ruff` and `pyright` are now version-constrained across the `dev` extra, pre-commit, and CI. A floating `ruff>=0.4` had let ruff 0.16 — which began formatting Python blocks inside Markdown — fail CI on unrelated pull requests. The `dev` extra allows `ruff~=0.15.20`; `pyright` takes an exact pin because it has only ever released 1.1.x, which leaves `~=` unbounded
 - `CITATION.cff` now credits Sean O'Hara with an `Arbor Engineering Group` affiliation rather than the organisation alone, so citations name the author; `url` points at the project's landing page instead of duplicating `repository-code`, and the PyPI release is recorded under `identifiers`
-- `Homepage` in `[project.urls]` now points at the project's landing page on arboreng.com rather than repeating the `Repository` URL, so the PyPI listing links somewhere the repository does not already cover. Takes effect on the next release
+- `Homepage` in `[project.urls]` now points at the project's landing page on arboreng.com rather than repeating the `Repository` URL, so the PyPI listing links somewhere the repository does not already cover. Takes effect with this release
 
 ### Fixed
 
@@ -20,7 +22,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The B\* plausibility filter in `compute_bstar_swing` only ever removes negative coefficients on this archive — the `abs(bstar) > 1.0` arm never fires — and a negative B\* is what a fitter reports for orbital energy gain rather than noise. None of the 68 exclusions fall in the early window, so the filter acts on one side of the comparison only. Including them gives an observed ratio of 0.2373 against 0.2284 predicted, roughly 4 % rather than roughly 1 %, so the published agreement depended on an undocumented one-sided exclusion whose effect had never been measured. The agreement was also quoted as 1.3 %, a precision the prediction never supported: it is computed from 2-significant-figure constants, and the error is 1.0–1.3 % depending on where the ratios are rounded
 - The GP-history archive holds 2,680 records, not the 2,438 previously described as its full size; 2,438 is the number falling inside the two comparison windows. The remaining 242 are 10 records predating the early window, 68 rejected by the B\* plausibility filter, and 164 in an undocumented three-month gap between the windows — the period in which any change in behaviour would appear, whose removal makes a step between the windows look cleaner than the series supports
 - The B\* swing analysis described its two windows as "sailing" and "passive", the latter defined as "sail furled". LightSail 2 never furled its sail — it deployed in July 2019 via non-retractable booms and stayed deployed until reentry in November 2022 — so that contrast does not exist. The windows are hardcoded date ranges that inspect no attitude or sail state, and they also differ in solar activity and altitude, both of which move fitted B\* in the same direction as the hypothesised sail effect. The predicted ratio is additionally a single-point calculation at 720 km and F10.7 = 100, compared against an archive running to reentry. The observed and predicted numbers are unchanged; the claim they support is now stated as suggestive rather than confirming, and `VALIDATION_RECORD.md` §2 records what a controlled version would require. The result interpretation string no longer cites confounds only when the ratio falls in the unexpected direction
-- The README described cislunar-sim as an alternative to "the XML configuration of GMAT". GMAT is not XML-configured — missions are `.script` files using `Create`/assignment syntax — so the comparison now names the real difference: an importable library versus an application driven by mission scripts. This text is the PyPI long description, so the correction reaches PyPI on the next release
+- The README described cislunar-sim as an alternative to "the XML configuration of GMAT". GMAT is not XML-configured — missions are `.script` files using `Create`/assignment syntax — so the comparison now names the real difference: an importable library versus an application driven by mission scripts. This text is the PyPI long description, so the correction reaches PyPI with this release
 
 ## [1.0.0] — 2026-06-08
 
@@ -58,4 +60,5 @@ Initial public release.
 - CelesTrak and SatNOGS telemetry fetchers
 - CCSDS OEM trajectory export for comparison with GMAT, Orekit, or STK
 
+[1.0.1]: https://github.com/arboreng/cislunar-sim/releases/tag/v1.0.1
 [1.0.0]: https://github.com/arboreng/cislunar-sim/releases/tag/v1.0.0

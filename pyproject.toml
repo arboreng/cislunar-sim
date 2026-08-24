@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cislunar-sim"
-version = "1.0.0"
+version = "1.0.1"
 description = "High-fidelity cislunar spacecraft simulation cross-validated against LightSail 2 mission data"
 readme = "README.md"
 requires-python = ">=3.11"
