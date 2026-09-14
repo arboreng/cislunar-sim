@@ -60,7 +60,7 @@ dev = [
     # ~=0.16.0 takes 0.16 patches but blocks the next breaking minor, while
     # pyright has only ever shipped 1.1.x, so ~=1.1.411 would bound nothing.
     "ruff~=0.16.0",
-    "pyright==1.1.411",
+    "pyright==1.1.414",
     "pre-commit>=3.7",
 ]
 
